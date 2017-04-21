@@ -1,6 +1,6 @@
 package by.gsu.epamlab;
 
-public class Ruble {
+public final class Ruble {
     private final int rubls;
 
     public int getRubls() {
