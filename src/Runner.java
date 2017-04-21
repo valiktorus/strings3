@@ -18,7 +18,6 @@ public class Runner {
                 outputLine = lineDelimiter + LineCorrector.correctLine(inputLine);
                 lineDelimiter = "\n";
                 bufferedWriter.write(outputLine);
-                System.out.println(LineCorrector.correctLine(inputLine));
             }
         }catch (FileNotFoundException e) {
             System.err.println("Input file not found");
