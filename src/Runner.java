@@ -8,19 +8,21 @@ public class Runner {
         Scanner scanner = null;
         BufferedWriter bufferedWriter = null;
         try {
-            scanner = new Scanner(new FileReader("src/in.txt"));
-            bufferedWriter = new BufferedWriter(new FileWriter("src/out.txt"));
+            scanner = new Scanner(new FileReader(Constants.INPUT_FILE_NAME));
+            bufferedWriter = new BufferedWriter(new FileWriter(Constants.OUTPUT_FILE_NAME));
             String inputLine;
             String outputLine;
-            String lineDelimiter = "";
+            String lineDelimiter = Constants.EMPTY_LINE;
             while (scanner.hasNextLine()) {
                 inputLine = scanner.nextLine();
                 outputLine = lineDelimiter + LineCorrector.correctLine(inputLine);
-                lineDelimiter = "\n";
+                if (lineDelimiter.isEmpty()){
+                    lineDelimiter = Constants.LINE_DELIMITER;
+                }
                 bufferedWriter.write(outputLine);
             }
         }catch (FileNotFoundException e) {
-            System.err.println("Input file not found");
+            System.err.println(Constants.INPUT_FILE_IS_NOT_FOUND);
         }catch (IOException e) {
             e.printStackTrace();
         }finally {
