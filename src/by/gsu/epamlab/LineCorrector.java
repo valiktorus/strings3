@@ -25,7 +25,7 @@ public abstract class LineCorrector {
           String dateDelimiter = dateMatcher.group(2);
           String yearFormat = dateMatcher.group(4) != null ? "yyyy" : "yy";
           try {
-              Date date = new SimpleDateFormat("dd" + dateDelimiter + "mm" + dateDelimiter + yearFormat).parse(foundDate);
+              Date date = new SimpleDateFormat("dd" + dateDelimiter + "MM" + dateDelimiter + yearFormat).parse(foundDate);
               Formatter formatter = new Formatter(Locale.ENGLISH);
               formatter.format("%tB %td, %tY", date, date, date);
               finalLine = finalLine.replace(foundDate, formatter.toString());
