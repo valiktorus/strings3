@@ -19,7 +19,6 @@ public abstract class DateCorrector extends LineCorrector{
     private static final int DELIMITER_GROUP_INDEX = 2;
     private static final int YEAR_GROUP_INDEX = 4;
 
-
     public static String correctLine(String line){
         String finalLine = line;
         Matcher dateMatcher = DATE_PATTERN.matcher(finalLine);
