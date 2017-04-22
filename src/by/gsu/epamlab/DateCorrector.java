@@ -1,40 +1,49 @@
 package by.gsu.epamlab;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class DateCorrector extends LineCorrector{
-    private static final String DATE = "(\\d{1,2}([/.-])){2}((\\d{4})|(\\d{2}))";
+public class DateCorrector extends LineCorrector{
+    private static final String DATE = "(\\d{1,2})[/.-](\\d{1,2})[/.-]((\\d{4})|(\\d{2}))";
     private static final Pattern DATE_PATTERN = Pattern.compile(DATE);
-    private static final String FULL_YEAR_FORMAT = "yyyy";
-    private static final String SMALL_YEAR_FORMAT = "yy";
-    private static final String DAY_FORMAT = "dd";
-    private static final String MONTH_FORMAT = "MM";
     private static final String FINAL_DATE_FORMAT = "%tB %td, %tY";
-    private static final int DELIMITER_GROUP_INDEX = 2;
-    private static final int YEAR_GROUP_INDEX = 4;
+    private static final String MILLENNIUM_YEAR_PREFIX = "20";
+    private static final int DAY_GROUP = 1;
+    private static final int MONTH_GROUP = 2;
+    private static final int FULL_YEAR_GROUP = 4;
+    private static final int MONTH_CORRECTOR = 1;
+    private static final int SMALL_YEAR_GROUP = 5;
 
-    public static String correctLine(String line){
-        String finalLine = line;
-        Matcher dateMatcher = DATE_PATTERN.matcher(finalLine);
-        while (dateMatcher.find()){
-            String foundDate = dateMatcher.group();
-            String dateDelimiter = dateMatcher.group(DELIMITER_GROUP_INDEX);
-            String yearFormat = dateMatcher.group(YEAR_GROUP_INDEX) != null ? FULL_YEAR_FORMAT : SMALL_YEAR_FORMAT;
-            try {
-                Date date = new SimpleDateFormat(DAY_FORMAT + dateDelimiter + MONTH_FORMAT + dateDelimiter + yearFormat).parse(foundDate);
-                Formatter formatter = new Formatter(Locale.ENGLISH);
-                formatter.format(FINAL_DATE_FORMAT, date, date, date);
-                finalLine = finalLine.replace(foundDate, formatter.toString());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+    @Override
+    protected String getReplacedPart(Matcher matcher) {
+        return matcher.group();
+    }
+
+    @Override
+    protected Pattern getPattern() {
+        return DATE_PATTERN;
+    }
+
+    @Override
+    protected String getFixedString(Matcher matcher) {
+        Calendar calendar = convertInputLineToCalendar(matcher);
+        Formatter formatter = new Formatter(Locale.ENGLISH);
+        return formatter.format(FINAL_DATE_FORMAT, calendar, calendar, calendar).toString();
+    }
+
+    private static Calendar convertInputLineToCalendar(Matcher dateMatcher) {
+        int day = Integer.parseInt(dateMatcher.group(DAY_GROUP));
+        int month = Integer.parseInt(dateMatcher.group(MONTH_GROUP));
+        String yearString = dateMatcher.group(FULL_YEAR_GROUP);
+        if (yearString == null) {
+            yearString = MILLENNIUM_YEAR_PREFIX + dateMatcher.group(SMALL_YEAR_GROUP);
         }
-        return finalLine;
+        int year = Integer.parseInt(yearString);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - MONTH_CORRECTOR, day);
+        return calendar;
     }
 }
